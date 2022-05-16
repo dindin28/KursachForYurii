@@ -1,8 +1,11 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
-int digitsOfNumber(int x);
+#include "matrix.h"
+
 void clear();
+void EditMatrix(Matrix& matrix);
+void PrintAnswers(const std::vector<Fraction> ans);
 
 #ifdef __linux__
 char _getch(void);

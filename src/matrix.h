@@ -10,6 +10,7 @@ class Matrix
 {
 public:
     Matrix(std::initializer_list<std::initializer_list<Fraction>> v);
+    Matrix();
 
     // Methods
     std::size_t getRowsCount() const;
@@ -23,6 +24,7 @@ public:
 
     std::vector<Fraction> gauss(bool isVerbose = false) const;
     std::vector<Fraction> cramera(bool isVerbose = false) const;
+    std::vector<Fraction> montane(bool isVerbose = false) const;
 
     // operators
     friend std::ostream& operator<<(std::ostream& out, const Matrix& a);
@@ -33,12 +35,10 @@ private:
     Matrix getMatrixForCramera(std::size_t column) const;
 
     // row_helpers
-    std::vector<Fraction> getRowVector(std::size_t column);
     void swapRows(std::size_t row1, std::size_t row2);
     std::size_t rowsWithZeros() const;
 
     // column_helpers
-    std::pair<Fraction&, std::ptrdiff_t> getMaxElementInColumn(std::size_t column);
     std::size_t getMaxSymbolCountInColumn(std::size_t column);
     std::vector<Fraction> getColumnVector(std::size_t column) const;
 

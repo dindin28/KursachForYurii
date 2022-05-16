@@ -18,6 +18,8 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<Fraction>> v)
 {
 }
 
+Matrix::Matrix() {}
+
 //=================================
 // operators
 //=================================
@@ -130,7 +132,7 @@ std::vector<Fraction> Matrix::cramera(bool isVerbose) const
     std::size_t size = getColumnsCount() - 1;
     std::vector<Fraction> ans(size);
     Fraction mainDeterminant = this->determinant();
-    if(isVerbose)
+    if (isVerbose)
     {
         std::cout << "det = " << mainDeterminant << std::endl;
     }
@@ -139,7 +141,7 @@ std::vector<Fraction> Matrix::cramera(bool isVerbose) const
         Fraction buff(mainDeterminant);
         Matrix buffMatrix(this->getMatrixForCramera(i));
         auto det = buffMatrix.determinant();
-        if(isVerbose)
+        if (isVerbose)
         {
             std::cout << "det" << i + 1 << " = " << det << std::endl;
         }
@@ -149,23 +151,61 @@ std::vector<Fraction> Matrix::cramera(bool isVerbose) const
     return ans;
 }
 
+std::vector<Fraction> Matrix::montane(bool isVerbose) const
+{
+    Matrix new_matrix(*this);
+    Fraction supElement(1, 1);
+    for (std::size_t k = 0; k < getRowsCount(); ++k)
+    {
+        for (std::size_t i = 0; i < getRowsCount(); ++i)
+        {
+            if (i != k)
+            {
+                for (std::size_t j = getColumnsCount() - 1; j > 0; --j)
+                {
+                    Fraction firPro(new_matrix.at(k, k) * new_matrix.at(j, i));
+                    Fraction secPro(new_matrix.at(j, k) * new_matrix.at(k, i));
+                    Fraction diff(firPro - secPro);
+                    new_matrix.at(j, i) = diff / supElement;
+                    if (isVerbose)
+                    {
+                        std::cout << new_matrix << std::endl;
+                    }
+                }
+            }
+        }
+        supElement = new_matrix.at(k, k);
+        if (isVerbose)
+        {
+            std::cout << new_matrix << std::endl;
+        }
+    }
+    std::vector<Fraction> ans(getRowsCount());
+    for (std::size_t i = 0; i < getColumnsCount() - 1; i++)
+    {
+        Fraction buff(new_matrix.at(getColumnsCount() - 1, i));
+        ans[i] = buff / supElement;
+    }
+    return ans;
+}
+
 //=================================
 // private_methods
 //=================================
 Matrix Matrix::getMatrixForCramera(std::size_t column) const
 {
     Matrix newMatrix(*this);
-    for (std::size_t i = 0; i < getRowsCount(); i++)
+    for (std::size_t i = 0; i < getRowsCount(); ++i)
     {
-        for (int j = 0; j < getColumnsCount() - 1; j++)
+        for (std::size_t j = 0; j < getColumnsCount() - 1; ++j)
         {
             if (j == column)
             {
-                newMatrix.at(j, i) = const_cast<Matrix*>(this)->at(getColumnsCount() - 1, i);
+                newMatrix.at(j, i) = const_cast<Matrix *>(this)->at(getColumnsCount() - 1, i);
             }
             else
             {
-                newMatrix.at(j, i) = const_cast<Matrix*>(this)->at(j, i);
+                newMatrix.at(j, i) = const_cast<Matrix *>(this)->at(j, i);
             }
         }
     }
@@ -199,15 +239,6 @@ std::size_t Matrix::rowsWithZeros() const
     return sum;
 }
 
-std::pair<Fraction &, std::ptrdiff_t> Matrix::getMaxElementInColumn(std::size_t column)
-{
-    std::vector<Fraction> column_vec(getColumnVector(column));
-    auto elem = std::max_element(column_vec.begin(), column_vec.end());
-    auto dis = std::distance(column_vec.begin(), elem);
-
-    return std::make_pair(std::ref(*elem), dis);
-}
-
 Fraction &Matrix::at(std::size_t x, std::size_t y)
 {
     return std::ref(matrix_.at(y).at(x));
@@ -229,11 +260,6 @@ std::vector<Fraction> Matrix::getColumnVector(std::size_t column) const
         return_vector.push_back(const_cast<Matrix *>(this)->at(column, i));
     }
     return return_vector;
-}
-
-std::vector<Fraction> Matrix::getRowVector(std::size_t column)
-{
-    return std::vector<Fraction>(matrix_.at(column).begin(), matrix_.at(column).end());
 }
 
 //===========================
@@ -323,6 +349,7 @@ std::istream &Matrix::input(std::istream &in)
             at(j, i) = f;
         }
     }
+    this->Simplify();
     return in;
 }
 

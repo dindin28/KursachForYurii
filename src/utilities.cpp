@@ -7,12 +7,124 @@
 #include <termios.h>
 #endif // __linux__
 
-int digitsOfNumber(int x) {
-    x = abs(x);
-    int n = 1;
-    while ((x /= 10) > 0)
-        n++;
-    return n;
+void EditMatrix(Matrix& matrix)
+{
+    int ch = -1;
+    bool isWrongInput;
+    while(ch != 0)
+    {
+        isWrongInput = false;
+        do
+        {
+            clear();
+            std::cout << "Matrix:\n" << matrix << "\n";
+            if(isWrongInput)
+            { std::cout << "Wrong input!\n"; }
+            else
+            { isWrongInput = true; }
+            std::cout << "1) Calculate determinant\n";
+            std::cout << "2) Calculate matrix rang\n";
+            std::cout << "3) Calculate matrix via gauss\n";
+            std::cout << "4) Calculate matrix via gauss(verbose)\n";
+            std::cout << "5) Calculate matrix via cramera\n";
+            std::cout << "6) Calculate matrix via cramera(verbose)\n";
+            std::cout << "7) Calculate matrix via montane\n";
+            std::cout << "8) Calculate matrix via montane(verbose)\n";
+            std::cout << "9) Enter new matrix\n";
+            std::cout << "0) Exit\n\n";
+            std::cout << "Enter number: ";
+            std::cin >> ch;
+        } while (ch != 0 && ch != 1 && ch != 2 &&
+                 ch != 3 && ch != 4 && ch != 5 &&
+                 ch != 6 && ch != 7 && ch != 8 && ch != 9);
+        switch (ch)
+        {
+        case (1):
+            {
+                std::cout << "Determinant: " << matrix.determinant() << std::endl;
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (2):
+            {
+                std::cout << "Rang: " << matrix.rang() << std::endl;
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (3):
+            {
+                auto answers = matrix.gauss();
+                std::cout << "Answers (gauss method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (4):
+            {
+                std::cout << "Action course:" << std::endl;
+                auto answers = matrix.gauss(true);
+                std::cout << "Answers (gauss method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (5):
+            {
+                auto answers = matrix.cramera();
+                std::cout << "Answers (cramera method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (6):
+            {
+                std::cout << "Action course:" << std::endl;
+                auto answers = matrix.cramera(true);
+                std::cout << "Answers (cramera method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (7):
+            {
+                auto answers = matrix.montane();
+                std::cout << "Answers (montane method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (8):
+            {
+                std::cout << "Action course:" << std::endl;
+                auto answers = matrix.montane(true);
+                std::cout << "Answers (montane method): " << std::endl;
+                PrintAnswers(answers);
+                std::cout << "Press any key";
+                _getch();
+            }
+            break;
+        case (9):
+            {
+                std::cin >> matrix;
+            }
+            break;
+        }
+    }
+}
+
+void PrintAnswers(const std::vector<Fraction> ans)
+{
+    for(std::size_t i = 0; i < ans.size(); ++i)
+    {
+        std::cout << "x[" << i + 1 << "] = " << ans.at(i) << std::endl;
+    }
 }
 
 void clear()
