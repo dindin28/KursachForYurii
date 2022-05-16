@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <cmath>
 
 //=================================
 // external_functions_declarations
@@ -14,15 +15,56 @@ void makeSpace(std::ostream &out, std::size_t spaces);
 // constructors
 //=================================
 Matrix::Matrix(std::initializer_list<std::initializer_list<Fraction>> v)
-    : matrix_(v.begin(), v.end())
+    : matrix_(v.begin(), v.end()), is_expand_(true)
 {
 }
 
-Matrix::Matrix() {}
+Matrix::Matrix()
+    : is_expand_(true)
+{}
+
+
+Matrix::Matrix(std::size_t rows_count, std::size_t columns_count)
+    : is_expand_(false)
+{
+    for(std::size_t i = 0; i < rows_count; ++i)
+    {
+        matrix_.push_back(std::vector<Fraction>(columns_count));
+    }
+}
 
 //=================================
 // operators
 //=================================
+
+Matrix operator*(const Fraction& fr, const Matrix& matrix)
+{
+    Matrix new_matrix(matrix);
+    for(auto& rows : new_matrix.matrix_)
+    {
+        for(auto& iter : rows)
+        {
+            iter *= fr;
+        }
+    }
+    return new_matrix;
+}
+
+std::vector<Fraction> operator*(const Matrix& matrix, const std::vector<Fraction>& vec)
+{
+    std::vector<Fraction> return_vector;
+    for(std::size_t y = 0; y < matrix.getRowsCount(); ++y)
+    {
+        Fraction sum(0);
+        for(std::size_t x = 0; x < matrix.getColumnsCount(); ++x)
+        {
+            sum += const_cast<Matrix&>(matrix).at(x, y) * vec.at(x);
+        }
+        return_vector.push_back(sum);
+    }
+    return return_vector;
+}
+
 std::ostream &operator<<(std::ostream &out, const Matrix &a)
 {
     return const_cast<Matrix &>(a).show(out);
@@ -189,9 +231,88 @@ std::vector<Fraction> Matrix::montane(bool isVerbose) const
     return ans;
 }
 
+
+std::vector<Fraction> Matrix::matrixMethod(bool isVerbose) const
+{
+    if(determinant() != Fraction(0))
+    {
+        auto matrix = algebraicComplement();
+        if(isVerbose)
+        {
+            std::cout << "Algebraic complement matrix:\n" << matrix << std::endl;
+        }
+        matrix = matrix.transpon();
+        if(isVerbose)
+        {
+            std::cout << "Transponation matrix:\n" << matrix << std::endl;
+        }
+        matrix = (Fraction(1) / this->determinant()) * matrix;
+        if(isVerbose)
+        {
+            std::cout << "matrix^(-1):\n" << matrix << std::endl;
+        }
+        auto vec = matrix * getColumnVector(getColumnsCount() - 1);
+
+        return vec;
+    }
+    else
+    {
+        std::cout << "Determinant is zero\n";
+        return std::vector<Fraction>();
+    }
+}
+
 //=================================
 // private_methods
 //=================================
+Matrix Matrix::algebraicComplement() const
+{
+    Matrix return_matrix(getRowsCount(), getRowsCount());
+    for(std::size_t y = 0; y < return_matrix.getRowsCount(); ++y)
+    {
+        for(std::size_t x = 0; x < return_matrix.getColumnsCount(); ++x)
+        {
+            return_matrix.at(x, y) =
+                Fraction(std::pow(-1, x + y)) * algebraicComplementHelper(std::make_pair(x, y)).determinant();
+        }
+    }
+    return return_matrix;
+}
+
+Matrix Matrix::algebraicComplementHelper(std::pair<std::size_t, std::size_t> xy_coord) const
+{
+    Matrix return_matrix(getRowsCount() - 1, getRowsCount() - 1);
+    for(std::size_t y_main = 0, y_new = 0; y_main < getRowsCount(); ++y_main)
+    {
+        if(y_main != xy_coord.second)
+        {
+            for(std::size_t x_main = 0, x_new = 0; x_main < getRowsCount(); ++x_main)
+            {
+                if(x_main != xy_coord.first)
+                {                    
+                    return_matrix.at(x_new, y_new) = const_cast<Matrix*>(this)->at(x_main, y_main);
+                    ++x_new;
+                }
+            }
+            ++y_new;
+        }
+    }
+    return return_matrix;
+}
+
+Matrix Matrix::transpon() const
+{
+    Matrix new_matrix(*this);
+    for(std::size_t y = 0; y < getRowsCount(); ++y)
+    {
+        for(std::size_t x = y + 1; x < getColumnsCount(); ++x)
+        {
+            std::swap(new_matrix.at(x, y), new_matrix.at(y, x));
+        }
+    }
+    return new_matrix;
+}
+
 Matrix Matrix::getMatrixForCramera(std::size_t column) const
 {
     Matrix newMatrix(*this);
@@ -279,7 +400,7 @@ std::ostream &Matrix::show(std::ostream &out, std::pair<std::size_t, std::size_t
         {
             makeSpace(str, (max_symbols[j] + 1) - at(j, i).getTotalSymbols());
             (j == coord.first && i == coord.second) ? (str << 'X') : (str << at(j, i));
-            if (j == getColumnsCount() - 2)
+            if (j == getColumnsCount() - 2 && is_expand_)
             {
                 str << " |";
             }
@@ -303,7 +424,7 @@ std::ostream &Matrix::show(std::ostream &out)
         {
             makeSpace(str, (max_symbols[j] + 1) - at(j, i).getTotalSymbols());
             str << at(j, i);
-            if (j == getColumnsCount() - 2)
+            if (j == getColumnsCount() - 2 && is_expand_)
             {
                 str << " |";
             }

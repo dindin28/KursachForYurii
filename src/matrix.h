@@ -9,8 +9,9 @@
 class Matrix
 {
 public:
-    Matrix(std::initializer_list<std::initializer_list<Fraction>> v);
     Matrix();
+    Matrix(std::size_t, std::size_t);
+    Matrix(std::initializer_list<std::initializer_list<Fraction>> v);
 
     // Methods
     std::size_t getRowsCount() const;
@@ -25,12 +26,21 @@ public:
     std::vector<Fraction> gauss(bool isVerbose = false) const;
     std::vector<Fraction> cramera(bool isVerbose = false) const;
     std::vector<Fraction> montane(bool isVerbose = false) const;
+    std::vector<Fraction> matrixMethod(bool isVerbose = false) const;
 
     // operators
+    friend Matrix operator*(const Fraction& fr, const Matrix& matrix);
+    friend std::vector<Fraction> operator*(const Matrix& matrix, const std::vector<Fraction>& vec);
+
     friend std::ostream& operator<<(std::ostream& out, const Matrix& a);
     friend std::istream& operator>>(std::istream& in, Matrix& a);
 
 private:
+    // matrix_method_helper
+    Matrix algebraicComplement() const;
+    Matrix algebraicComplementHelper(std::pair<std::size_t, std::size_t> xy_coord) const;
+    Matrix transpon() const;
+
     // cramera_helper
     Matrix getMatrixForCramera(std::size_t column) const;
 
@@ -49,6 +59,7 @@ private:
 
 private:
     std::vector<std::vector<Fraction>> matrix_;
+    bool is_expand_;
 };
 
 #endif // MATRIX_H
