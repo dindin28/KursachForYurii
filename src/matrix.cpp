@@ -193,45 +193,6 @@ std::vector<Fraction> Matrix::cramera(bool isVerbose) const
     return ans;
 }
 
-std::vector<Fraction> Matrix::montane(bool isVerbose) const
-{
-    Matrix new_matrix(*this);
-    Fraction supElement(1, 1);
-    for (std::size_t k = 0; k < getRowsCount(); ++k)
-    {
-        for (std::size_t i = 0; i < getRowsCount(); ++i)
-        {
-            if (i != k)
-            {
-                for (std::size_t j = getColumnsCount() - 1; j > 0; --j)
-                {
-                    Fraction firPro(new_matrix.at(k, k) * new_matrix.at(j, i));
-                    Fraction secPro(new_matrix.at(j, k) * new_matrix.at(k, i));
-                    Fraction diff(firPro - secPro);
-                    new_matrix.at(j, i) = diff / supElement;
-                    if (isVerbose)
-                    {
-                        std::cout << new_matrix << std::endl;
-                    }
-                }
-            }
-        }
-        supElement = new_matrix.at(k, k);
-        if (isVerbose)
-        {
-            std::cout << new_matrix << std::endl;
-        }
-    }
-    std::vector<Fraction> ans(getRowsCount());
-    for (std::size_t i = 0; i < getColumnsCount() - 1; i++)
-    {
-        Fraction buff(new_matrix.at(getColumnsCount() - 1, i));
-        ans[i] = buff / supElement;
-    }
-    return ans;
-}
-
-
 std::vector<Fraction> Matrix::matrixMethod(bool isVerbose) const
 {
     if(determinant() != Fraction(0))

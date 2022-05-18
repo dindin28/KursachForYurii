@@ -28,18 +28,16 @@ void EditMatrix(Matrix& matrix)
             std::cout << "4) Calculate matrix via gauss(verbose)\n";
             std::cout << "5) Calculate matrix via cramera\n";
             std::cout << "6) Calculate matrix via cramera(verbose)\n";
-            std::cout << "7) Calculate matrix via montane\n";
-            std::cout << "8) Calculate matrix via montane(verbose)\n";
-            std::cout << "9) Calculate matrix via matrix method\n";
-            std::cout << "10) Calculate matrix via matrix method(verbose)\n";
-            std::cout << "11) Enter new matrix\n";
+            std::cout << "7) Calculate matrix via matrix method\n";
+            std::cout << "8) Calculate matrix via matrix method(verbose)\n";
+            std::cout << "9) Enter new matrix\n";
             std::cout << "0) Exit\n\n";
             std::cout << "Enter number: ";
             std::cin >> ch;
         } while (ch != 0 && ch != 1 && ch != 2 &&
                  ch != 3 && ch != 4 && ch != 5 &&
                  ch != 6 && ch != 7 && ch != 8 &&
-                 ch != 9 && ch != 10 && ch != 11);
+                 ch != 9);
         try
         {
             switch (ch)
@@ -98,8 +96,8 @@ void EditMatrix(Matrix& matrix)
                 break;
             case (7):
                 {
-                    auto answers = matrix.montane();
-                    std::cout << "Answers (montane method): " << std::endl;
+                    auto answers = matrix.matrixMethod();
+                    std::cout << "Answers (matrix method method): " << std::endl;
                     PrintAnswers(answers);
                     std::cout << "Press any key";
                     _getch();
@@ -108,33 +106,14 @@ void EditMatrix(Matrix& matrix)
             case (8):
                 {
                     std::cout << "Action course:" << std::endl;
-                    auto answers = matrix.montane(true);
-                    std::cout << "Answers (montane method): " << std::endl;
+                    auto answers = matrix.matrixMethod(true);
+                    std::cout << "Answers (matrix method method): " << std::endl;
                     PrintAnswers(answers);
                     std::cout << "Press any key";
                     _getch();
                 }
                 break;
             case (9):
-                {
-                    auto answers = matrix.matrixMethod();
-                    std::cout << "Answers (matrix method): " << std::endl;
-                    PrintAnswers(answers);
-                    std::cout << "Press any key";
-                    _getch();
-                }
-                break;
-            case (10):
-                {
-                    std::cout << "Action course:" << std::endl;
-                    auto answers = matrix.matrixMethod(true);
-                    std::cout << "Answers (matrix method): " << std::endl;
-                    PrintAnswers(answers);
-                    std::cout << "Press any key";
-                    _getch();
-                }
-                break;
-            case (11):
                 {
                     std::cin >> matrix;
                 }

@@ -25,7 +25,6 @@ public:
 
     std::vector<Fraction> gauss(bool isVerbose = false) const;
     std::vector<Fraction> cramera(bool isVerbose = false) const;
-    std::vector<Fraction> montane(bool isVerbose = false) const;
     std::vector<Fraction> matrixMethod(bool isVerbose = false) const;
 
     // operators
