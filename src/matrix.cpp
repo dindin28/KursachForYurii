@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <cmath>
+#include <sstream>
 
 //=================================
 // external_functions_declarations

@@ -7,10 +7,4 @@ void clear();
 void EditMatrix(Matrix& matrix);
 void PrintAnswers(const std::vector<Fraction> ans);
 
-#ifdef __linux__
-char _getch(void);
-#elif _WIN32
-#include <conio.h>
-#endif
-
 #endif
